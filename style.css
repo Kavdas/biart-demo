@@ -632,7 +632,6 @@ body.has-dark-hero .site-header { transition: background .25s, border-color .25s
 .prices .section-title { color: var(--c-cream); }
 .prices .section-lead { color: rgba(255, 245, 230, .75); }
 .prices .eyebrow { color: var(--c-pink); }
-.prices .price-note { color: rgba(255, 245, 230, .78); }
 .price-grid { gap: var(--gap); align-items: stretch; }
 .price {
   background: var(--c-cream);
@@ -700,11 +699,19 @@ body.has-dark-hero .site-header { transition: background .25s, border-color .25s
 .price-actions .wp-block-button { width: 100%; }
 .price-actions .wp-block-button__link { width: 100%; text-align: center; box-sizing: border-box; }
 .price-trial .btn-ghost .wp-block-button__link { border-style: dashed; }
-:root .price-note {
-  margin-top: 24px;
-  font-size: var(--fs-small);
-  color: var(--c-muted);
-  max-width: 70ch;
+/* условия абонемента — не мелкий шрифт под таблицей, а заметная плашка:
+   родители читают её до того, как написать в WhatsApp */
+:root .prices .price-note {
+  margin-top: 36px;
+  max-width: 78ch;
+  font-size: var(--fs-body);
+  line-height: 1.55;
+  color: var(--c-cream);
+  background: rgba(255, 245, 230, .1);
+  border: 1px solid rgba(232, 163, 199, .4);
+  border-left: 3px solid var(--c-pink);
+  border-radius: var(--radius-sm);
+  padding: 20px 26px;
 }
 
 /* ============================================================
