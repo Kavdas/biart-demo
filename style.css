@@ -3,7 +3,7 @@ Theme Name: BIART
 Theme URI: https://biart.kz
 Author: BIART
 Description: Блочная тема школы креативных индустрий BIART (Астана). Собрана по брендбуку.
-Version: 0.9.3
+Version: 0.9.4
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 8.1
@@ -287,14 +287,15 @@ header.wp-block-template-part { position: sticky; top: 0; z-index: 50; }
 :root {
   --hero-title: clamp(56px, 9.6vw, 140px);
   --hero-h: max(640px, 100svh);
+  --hero-pos: 50% 40%;   /* кадрирование хиро-фото: фасад школы */
   --hero-strip-h: 96px;
   --c-stage: #2a0f1c;
 }
 @media (max-width: 781px) {
-  :root { --hero-h: max(560px, 92svh); --hero-strip-h: 72px; }
+  :root { --hero-h: max(560px, 92svh); --hero-strip-h: 72px; --hero-pos: 42% 34%; }
 }
 :root .hero { padding: 0; background: var(--c-stage); overflow: hidden; margin-top: calc(-1 * var(--header-h)); /* под прозрачную шапку; :root — бьёт WP-правило :first-child */ }
-/* сцена на весь экран: фото + театральный градиент */
+/* сцена на весь экран: фото в полный цвет + мягкая подложка снизу под текст */
 :root .hero-stage {
   position: relative;
   min-height: var(--hero-h);
@@ -305,16 +306,18 @@ header.wp-block-template-part { position: sticky; top: 0; z-index: 50; }
   position: absolute; inset: 0; margin: 0; z-index: 0;
 }
 .hero-stage .hero-photo img {
-  width: 100%; height: 100%; object-fit: cover; object-position: 50% 40%;
+  width: 100%; height: 100%; object-fit: cover; object-position: var(--hero-pos);
   display: block; border-radius: 0; box-shadow: none;
-  opacity: .78;
+  filter: saturate(1.06) contrast(1.03);   /* лёгкий грейд: небо и фасад живее, без тонировки */
 }
 .hero-stage::before {
   content: "";
   position: absolute; inset: 0; z-index: 1; pointer-events: none;
-  background:
-    linear-gradient(90deg, rgba(42, 15, 28, .96) 12%, rgba(42, 15, 28, .55) 45%, rgba(42, 15, 28, .05) 100%),
-    linear-gradient(0deg, rgba(42, 15, 28, .9) 0%, rgba(42, 15, 28, 0) 40%);
+  /* одна подложка снизу вверх цветом сцены (--c-stage): текст держится,
+     небо и здание остаются в своём цвете */
+  background: linear-gradient(0deg,
+    rgba(42, 15, 28, .94) 0%, rgba(42, 15, 28, .86) 18%, rgba(42, 15, 28, .6) 38%,
+    rgba(42, 15, 28, .22) 58%, rgba(42, 15, 28, 0) 76%);
 }
 :root .hero-text {
   position: relative; z-index: 2;
@@ -322,7 +325,17 @@ header.wp-block-template-part { position: sticky; top: 0; z-index: 50; }
   max-width: 900px;
   padding: calc(var(--header-h) + 48px) var(--gutter) 88px max(var(--gutter), calc(50vw - var(--content) / 2));
 }
-:root .hero .eyebrow { margin: 0; color: var(--c-pink); }
+/* надзаголовок на фото: плашка в тон шапке — розовый текст на светлом здании не читался */
+:root .hero-text .eyebrow {
+  margin: 0;
+  align-self: flex-start;
+  color: var(--c-cream);
+  background: rgba(42, 15, 28, .55);
+  border: 1px solid rgba(232, 163, 199, .45);
+  border-radius: 999px;
+  padding: 9px 18px;
+  backdrop-filter: blur(10px);
+}
 :root .hero-title {
   font-size: var(--hero-title);
   line-height: .92;
@@ -335,7 +348,7 @@ header.wp-block-template-part { position: sticky; top: 0; z-index: 50; }
   line-height: 1.45;
   max-width: 46ch;
   margin: 0;
-  color: rgba(255, 245, 230, .85);
+  color: rgba(255, 245, 230, .93);
 }
 :root .hero-actions { margin: 8px 0 0; align-items: center; gap: 28px; }
 .hero-actions .btn-primary .wp-block-button__link { box-shadow: 0 16px 40px -14px rgba(219, 77, 55, .8); }
@@ -393,11 +406,6 @@ body.has-dark-hero .site-header { transition: background .25s, border-color .25s
 @media (max-width: 781px) {
   :root .hero-text { padding: calc(var(--header-h) + 32px) var(--gutter) 56px; gap: 18px; }
   :root .hero-actions { flex-direction: column; align-items: flex-start; gap: 14px; }
-  .hero-stage::before {
-    background:
-      linear-gradient(0deg, var(--c-stage) 10%, rgba(42, 15, 28, .35) 60%, rgba(42, 15, 28, .1) 100%);
-  }
-  .hero-stage .hero-photo img { object-position: 50% 30%; }
   :root .hero-strip { padding: 0 var(--gutter); gap: 32px; }
   .hero-strip img { height: 32px; }
 }
@@ -1132,12 +1140,12 @@ body.lb-open { overflow: hidden; }
    ФОТО-КАРУСЕЛЬ: стрелки, drag, свайп, автопрокрутка у краёв
    ============================================================ */
 :root {
-  --car-h: 400px;      /* высота фото */
+  --car-h: 320px;      /* высота фото: ниже — в кадр попадает больше снимков */
   --car-gap: 16px;
   --car-btn: 56px;
 }
 @media (max-width: 781px) {
-  :root { --car-h: 240px; --car-gap: 10px; --car-btn: 44px; }
+  :root { --car-h: 210px; --car-gap: 10px; --car-btn: 44px; }
 }
 .space-wide { padding-left: 0; padding-right: 0; }
 .space-wide > .wrap { padding: 0 var(--gutter); }
