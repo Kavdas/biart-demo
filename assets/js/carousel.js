@@ -53,6 +53,45 @@
     imgs.forEach(function (i) { i.loading = 'eager'; i.addEventListener('load', function () { if (!placed && track.scrollWidth > track.clientWidth * 2) place(); }); });
     if (track.scrollWidth > track.clientWidth * 2) place(); else setTimeout(place, 1500);
 
+    // счётчик и полоса прогресса: с 39 кадрами без них непонятно, где ты и сколько ещё
+    var meta = document.createElement('div');
+    meta.className = 'car-meta';
+    var count = document.createElement('span');
+    count.className = 'car-count';
+    var bar = document.createElement('span');
+    bar.className = 'car-bar';
+    var fill = document.createElement('i');
+    bar.appendChild(fill);
+    meta.appendChild(count);
+    meta.appendChild(bar);
+    c.appendChild(meta);
+    var total = originals.length;
+    var pad = function (k) { return (k < 10 ? '0' : '') + k; };
+    var drawRaf = null;
+    var draw = function () {
+      drawRaf = null;
+      if (!total) return;
+      // считаем по реальным позициям кадров, а не по доле скролла: с копиями по краям
+      // модульная арифметика ошибается на округлении и показывает 39/39 вместо 01/39
+      var kids = track.children;
+      var padLeft = parseFloat(getComputedStyle(track).paddingLeft) || 0;
+      var edge = track.scrollLeft + padLeft;
+      var k = 0, best = Infinity;
+      for (var j = 0; j < kids.length; j++) {
+        var d = Math.abs(kids[j].offsetLeft - edge);
+        if (d < best) { best = d; k = j; }
+      }
+      var i = (k % total) + 1;
+      count.textContent = pad(i) + ' / ' + total;
+      fill.style.width = (i / total * 100).toFixed(2) + '%';
+    };
+    var queueDraw = function () { if (!drawRaf) drawRaf = requestAnimationFrame(draw); };
+    track.addEventListener('scroll', queueDraw, { passive: true });
+    window.addEventListener('resize', queueDraw);
+    setTimeout(draw, 300);
+    setTimeout(draw, 1800);
+    draw();
+
     // перетаскивание мышью
     var down = false, startX = 0, startLeft = 0, moved = false;
     track.addEventListener('mousedown', function (e) {

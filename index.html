@@ -1474,6 +1474,7 @@ html :where(.is-position-sticky) {
 
 
 
+
 <link rel="canonical" href="./" />
 </head>
 
@@ -1492,7 +1493,7 @@ html :where(.is-position-sticky) {
 <p class="wp-block-paragraph"><a href="#about">О школе</a></p>
 <p class="wp-block-paragraph"><a href="#directions">Направления</a></p>
 <p class="wp-block-paragraph"><a href="#price">Цены</a></p>
-<p class="wp-block-paragraph"><a href="#teachers">Педагоги</a></p>
+<p class="wp-block-paragraph"><a href="#teachers">Команда</a></p>
 <p class="wp-block-paragraph"><a href="#space">Пространство</a></p>
 <p class="wp-block-paragraph"><a href="#faq">FAQ</a></p>
 <p class="wp-block-paragraph"><a href="#contacts">Контакты</a></p>
@@ -1882,12 +1883,20 @@ html :where(.is-position-sticky) {
 <div class="wp-block-group wrap is-layout-flow wp-block-group-is-layout-flow">
 
 <div class="wp-block-group teach-head is-layout-flow wp-block-group-is-layout-flow">
-<h2 class="wp-block-heading section-title">Сильные<br>педагоги</h2>
-<p class="section-lead wp-block-paragraph">Действующие музыканты, артисты, хореографы и digital-художники с опытом 10+ лет. Постоянный педагог у каждой группы, отчёт родителям каждый месяц, показы раз в квартал.</p>
+<h2 class="wp-block-heading section-title">Наша<br>команда</h2>
+<p class="section-lead wp-block-paragraph">Директор, кураторы направлений и педагоги: действующие музыканты, артисты, хореографы и digital-художники с опытом 10+ лет. Постоянный педагог у каждой группы, отчёт родителям каждый месяц, показы раз в квартал.</p>
 </div>
 
 
 <div class="wp-block-columns teacher-grid is-layout-flex wp-container-core-columns-is-layout-9ba6dbca wp-block-columns-is-layout-flex">
+
+<div class="wp-block-column teacher is-head is-layout-flow wp-block-column-is-layout-flow">
+<figure class="wp-block-image portrait"><img decoding="async" src="assets/img/portrait-placeholder.jpg" alt="Олжас Ибраев"/></figure>
+<h3 class="wp-block-heading">Олжас Ибраев</h3>
+<p class="teacher-role wp-block-paragraph">директор школы</p>
+<p class="teacher-cred wp-block-paragraph">Директор BIART. Фото и регалии — после фотосессии.</p>
+</div>
+
 
 <div class="wp-block-column teacher is-layout-flow wp-block-column-is-layout-flow">
 <figure class="wp-block-image portrait"><img decoding="async" src="assets/img/portrait-placeholder.jpg" alt="Мадина Бекенова"/></figure>
@@ -2258,6 +2267,7 @@ html :where(.is-position-sticky) {
 <p class="wp-block-paragraph"><a href="https://instagram.com/biart.kz" target="_blank" rel="noopener">Instagram</a></p>
 <p class="wp-block-paragraph"><a href="https://wa.me/77007103300">WhatsApp</a></p>
 <p class="wp-block-paragraph"><a href="#">Политика конфиденциальности</a></p>
+<p class="wp-block-paragraph"><a href="./dogovor-publichnoj-oferty/">Договор публичной оферты</a></p>
 </div>
 
 <p class="footer-copy wp-block-paragraph">© 2026 BIART — школа креативных индустрий, Астана</p>
@@ -2364,6 +2374,45 @@ html :where(.is-position-sticky) {
     var place = function () { if (placed) return; placed = true; jump(realW()); };
     imgs.forEach(function (i) { i.loading = 'eager'; i.addEventListener('load', function () { if (!placed && track.scrollWidth > track.clientWidth * 2) place(); }); });
     if (track.scrollWidth > track.clientWidth * 2) place(); else setTimeout(place, 1500);
+
+    // счётчик и полоса прогресса: с 39 кадрами без них непонятно, где ты и сколько ещё
+    var meta = document.createElement('div');
+    meta.className = 'car-meta';
+    var count = document.createElement('span');
+    count.className = 'car-count';
+    var bar = document.createElement('span');
+    bar.className = 'car-bar';
+    var fill = document.createElement('i');
+    bar.appendChild(fill);
+    meta.appendChild(count);
+    meta.appendChild(bar);
+    c.appendChild(meta);
+    var total = originals.length;
+    var pad = function (k) { return (k < 10 ? '0' : '') + k; };
+    var drawRaf = null;
+    var draw = function () {
+      drawRaf = null;
+      if (!total) return;
+      // считаем по реальным позициям кадров, а не по доле скролла: с копиями по краям
+      // модульная арифметика ошибается на округлении и показывает 39/39 вместо 01/39
+      var kids = track.children;
+      var padLeft = parseFloat(getComputedStyle(track).paddingLeft) || 0;
+      var edge = track.scrollLeft + padLeft;
+      var k = 0, best = Infinity;
+      for (var j = 0; j < kids.length; j++) {
+        var d = Math.abs(kids[j].offsetLeft - edge);
+        if (d < best) { best = d; k = j; }
+      }
+      var i = (k % total) + 1;
+      count.textContent = pad(i) + ' / ' + total;
+      fill.style.width = (i / total * 100).toFixed(2) + '%';
+    };
+    var queueDraw = function () { if (!drawRaf) drawRaf = requestAnimationFrame(draw); };
+    track.addEventListener('scroll', queueDraw, { passive: true });
+    window.addEventListener('resize', queueDraw);
+    setTimeout(draw, 300);
+    setTimeout(draw, 1800);
+    draw();
 
     // перетаскивание мышью
     var down = false, startX = 0, startLeft = 0, moved = false;
@@ -2472,6 +2521,77 @@ html :where(.is-position-sticky) {
     var dx = e.changedTouches[0].clientX - x0; x0 = null;
     if (Math.abs(dx) > 40) show(index + (dx < 0 ? 1 : -1));
   });
+})();
+
+/* Появление секций при скролле и докрутка цифр (400+, 35+, 5000 м²).
+   Без JS и при prefers-reduced-motion страница остаётся статичной — контент виден всегда. */
+(function () {
+  var motionOk = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!motionOk || !('IntersectionObserver' in window)) return;
+
+  document.documentElement.classList.add('has-reveal');
+
+  // 1. блоки выезжают снизу
+  var targets = document.querySelectorAll(
+    '.section .wrap > *, .benefit, .price, .teacher, .review, .dir-row, .ev-feat, .ev-item'
+  );
+  targets.forEach(function (el) { el.classList.add('reveal'); });
+
+  var revealed = 0;
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('is-in');
+      revealed++;
+      io.unobserve(e.target);
+    });
+  }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+  targets.forEach(function (el) { io.observe(el); });
+
+  // страховка: если наблюдатель за 4 секунды не показал вообще ничего — значит он
+  // не работает в этой среде. Контент не должен остаться невидимым ни при каких условиях
+  setTimeout(function () {
+    if (revealed) return;
+    targets.forEach(function (el) { el.classList.add('is-in'); });
+  }, 4000);
+  window.addEventListener('beforeprint', function () {
+    targets.forEach(function (el) { el.classList.add('is-in'); });
+  });
+
+  // 2. цифры докручиваются: «400+» -> 0…400, знаки и хвост сохраняем
+  var nums = document.querySelectorAll('.stat-num, .teach-facts strong');
+  var numIo = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (!e.isIntersecting) return;
+      numIo.unobserve(e.target);
+      var el = e.target;
+      var raw = el.textContent;
+      // разделитель тысяч только между цифрами: иначе «5000 м²» превращалось в «5 000м²»
+      var m = raw.match(/^(\D*)(\d+(?:[ \s]\d{3})*)(.*)$/);
+      if (!m) return;
+      var head = m[1], tail = m[3];
+      var digits = m[2].replace(/[^\d]/g, '');
+      var target = parseInt(digits, 10);
+      if (!target || target > 100000) return;
+      var grouped = /[ \s]/.test(m[2]);
+      var fmt = function (v) {
+        var t = String(v);
+        if (grouped) t = t.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+        return head + t + tail;
+      };
+      var dur = 900, t0 = 0;
+      var step = function (ts) {
+        if (!t0) t0 = ts;
+        var p = Math.min(1, (ts - t0) / dur);
+        var eased = 1 - Math.pow(1 - p, 3);
+        el.textContent = fmt(Math.round(target * eased));
+        if (p < 1) requestAnimationFrame(step);
+      };
+      el.textContent = fmt(0);
+      requestAnimationFrame(step);
+    });
+  }, { threshold: 0.6 });
+  nums.forEach(function (el) { numIo.observe(el); });
 })();
 
 </script>

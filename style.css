@@ -29,6 +29,7 @@ Text Domain: biart
   --c-bordeaux: #692445;
   --c-bordeaux-deep: #4d1a33;
   --c-vermilion: #db4d37;
+  --c-vermilion-ink: #b23623;   /* для мелкого текста: #db4d37 даёт 3.3–3.8:1 на светлых фонах, этот — 5.0–5.7:1 */
   --c-vermilion-dark: #c23f2b;
   --c-pink: #e8a3c7;
   --c-pink-soft: #f6dce9;
@@ -196,7 +197,7 @@ strong { font-weight: 700; }
   font-weight: 700;
   letter-spacing: .12em;
   text-transform: uppercase;
-  color: var(--c-vermilion);
+  color: var(--c-vermilion-ink);
   margin: 0 0 16px;
 }
 .eyebrow-light { color: var(--c-pink); }
@@ -793,6 +794,15 @@ body.has-dark-hero .site-header { transition: background .25s, border-color .25s
   gap: var(--gap);
 }
 .ev-item { padding: 24px 0 0; border-top: 2px solid var(--c-bordeaux); }
+/* период события — метка, а не строчка текста: три нижние карточки афиши
+   были суше остальной секции */
+:root .ev-item .event-date {
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--c-pink-soft, #f6d3e4);
+  color: var(--c-bordeaux);
+  margin-bottom: 14px;
+}
 :root .event-date {
   display: inline-block;
   margin: 0 0 8px;
@@ -1079,7 +1089,7 @@ body.lb-open { overflow: hidden; }
   --teach-big: clamp(56px, 7.8vw, 112px);
   --teach-name: clamp(26px, 2.4vw, 34px);
 }
-.teachers { background: var(--c-bordeaux); color: var(--c-cream); padding: 96px var(--gutter) 80px; }
+.teachers { background: linear-gradient(180deg, #5b1e3b 0%, #3f1430 100%); color: var(--c-cream); padding: 96px var(--gutter) 80px; }
 .teachers.section-deco::before { background-image: url("assets/img/submark-cream.webp"); opacity: .12; right: -160px; top: -120px; width: 640px; }
 :root .teach-head {
   display: flex; align-items: flex-end; justify-content: space-between; gap: 40px;
@@ -1184,6 +1194,7 @@ body.lb-open { overflow: hidden; }
 .editor-styles-wrapper .carousel .m img { height: var(--car-h) !important; width: auto !important; }
 .carousel .m img {
   height: var(--car-h); width: auto; max-width: none;
+  filter: saturate(1.06) contrast(1.03);
   border-radius: var(--radius-sm);
   object-fit: cover;
   display: block;
@@ -1211,6 +1222,24 @@ body.lb-open { overflow: hidden; }
 .car-btn:disabled:hover { background: var(--c-white); color: var(--c-bordeaux); }
 .car-prev { left: max(16px, calc(50vw - var(--content) / 2 - var(--car-btn) / 2)); }
 .car-next { right: max(16px, calc(50vw - var(--content) / 2 - var(--car-btn) / 2)); }
+/* счётчик кадров и полоса прогресса (создаёт carousel.js) */
+:root .car-meta {
+  display: flex; align-items: center; gap: 18px;
+  width: min(var(--content), 100% - var(--gutter) * 2);
+  margin: 14px auto 0;
+}
+.car-count {
+  font-family: var(--f-display); font-weight: 700;
+  font-size: var(--fs-small); letter-spacing: .08em;
+  color: var(--c-bordeaux); white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.car-bar { flex: 1; height: 3px; border-radius: 2px; background: rgba(105, 36, 69, .15); overflow: hidden; }
+.car-bar i { display: block; height: 100%; width: 0; border-radius: 2px; background: var(--c-vermilion); transition: width .15s linear; }
+@media (max-width: 781px) {
+  :root .car-meta { gap: 12px; margin-top: 10px; }
+}
+
 :root .carousel-hint {
   text-align: center;
   font-size: var(--fs-small);
@@ -1305,3 +1334,59 @@ body.lb-open { overflow: hidden; }
 :root .error-page h1 { font-size: var(--fs-h2); margin: 0 0 12px; }
 :root .error-page p { color: var(--c-muted); max-width: 44ch; margin: 0 auto 28px; }
 .error-page .wp-block-buttons { justify-content: center; }
+
+
+/* ============================================================
+   ПОЯВЛЕНИЕ БЛОКОВ ПРИ СКРОЛЛЕ
+   класс has-reveal ставит reveal.js — без JS и при reduce-motion
+   ничего не прячется
+   ============================================================ */
+.has-reveal .reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity .55s ease, transform .55s cubic-bezier(.22, .61, .36, 1);
+}
+.has-reveal .reveal.is-in { opacity: 1; transform: none; }
+/* лёгкая лесенка внутри сеток */
+.has-reveal .benefit:nth-child(2), .has-reveal .price:nth-child(2),
+.has-reveal .teacher:nth-child(2), .has-reveal .review:nth-child(2) { transition-delay: .07s; }
+.has-reveal .benefit:nth-child(3), .has-reveal .price:nth-child(3),
+.has-reveal .teacher:nth-child(3), .has-reveal .review:nth-child(3) { transition-delay: .14s; }
+.has-reveal .benefit:nth-child(4), .has-reveal .teacher:nth-child(4),
+.has-reveal .review:nth-child(4) { transition-delay: .21s; }
+.has-reveal .teacher:nth-child(5) { transition-delay: .28s; }
+@media (prefers-reduced-motion: reduce) {
+  .has-reveal .reveal { opacity: 1; transform: none; transition: none; }
+}
+/* в редакторе анимации не нужны */
+.editor-styles-wrapper .reveal { opacity: 1; transform: none; }
+
+
+/* ============================================================
+   ЮРИДИЧЕСКИЕ СТРАНИЦЫ (оферта, политика)
+   ============================================================ */
+:root .legal { max-width: 78ch; margin: 0 auto; }
+:root .legal p { font-size: var(--fs-body); line-height: 1.65; margin: 0 0 14px; color: var(--c-ink); }
+:root .legal .legal-lead {
+  font-size: var(--fs-lead); line-height: 1.5; color: var(--c-bordeaux);
+  padding: 20px 24px; margin: 0 0 40px;
+  background: var(--c-pink-soft, #f6d3e4); border-radius: var(--radius-sm);
+}
+:root .legal .legal-h {
+  font-family: var(--f-display); font-weight: 700;
+  font-size: var(--fs-h3); line-height: 1.15; color: var(--c-bordeaux);
+  margin: 40px 0 16px; max-width: none;
+}
+:root .legal .legal-h:first-of-type { margin-top: 0; }
+:root .legal .legal-sub { padding-left: 22px; color: var(--c-muted); }
+/* заголовок страницы над текстом */
+:root .page .wp-block-post-title,
+:root main .wp-block-post-title {
+  font-family: var(--f-display); font-weight: 700;
+  font-size: var(--fs-h2); line-height: 1; color: var(--c-bordeaux);
+  margin: 0 0 32px; max-width: 20ch;
+}
+@media (max-width: 781px) {
+  :root .legal .legal-lead { padding: 16px 18px; margin-bottom: 28px; }
+  :root .legal .legal-h { margin: 30px 0 12px; }
+}
