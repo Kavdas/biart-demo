@@ -1390,3 +1390,84 @@ body.lb-open { overflow: hidden; }
   :root .legal .legal-lead { padding: 16px 18px; margin-bottom: 28px; }
   :root .legal .legal-h { margin: 30px 0 12px; }
 }
+
+
+/* ============================================================
+   КОМАНДА: биография в карточке и всплывающее окно
+   класс has-team-modal ставит team.js — без JS биография
+   остаётся видимой прямо в карточке
+   ============================================================ */
+:root .teacher-cred { margin: 0; }
+:root .teacher-more {
+  margin: 10px 0 0;
+  font-size: var(--fs-small); font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase;
+  color: var(--c-pink);
+  border-bottom: 1px solid rgba(232, 163, 199, .5);
+  align-self: flex-start; padding-bottom: 2px;
+}
+:root .teacher-bio p { font-size: var(--fs-small); line-height: 1.6; color: rgba(255, 245, 230, .8); margin: 10px 0 0; }
+.has-team-modal .teacher-bio { display: none; }
+.has-team-modal .teacher-more { display: inline-block; }
+.teacher-more { display: none; }
+.has-team-modal .is-clickable { cursor: pointer; }
+.has-team-modal .teacher .portrait { overflow: hidden; }
+.has-team-modal .teacher .portrait img { transition: transform .45s cubic-bezier(.22, .61, .36, 1); }
+.has-team-modal .teacher .portrait:hover img,
+.has-team-modal .teacher .portrait:focus-visible img { transform: scale(1.04); }
+.has-team-modal .teacher-more:hover { color: var(--c-cream); border-bottom-color: var(--c-cream); }
+
+body.tm-open { overflow: hidden; }
+.tm {
+  position: fixed; inset: 0; z-index: 1000;
+  display: flex; align-items: center; justify-content: center;
+  padding: var(--gutter);
+  background: rgba(26, 10, 18, .82);
+  backdrop-filter: blur(4px);
+}
+.tm[hidden] { display: none; }
+.tm-box {
+  position: relative;
+  display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+  gap: 32px;
+  width: min(980px, 100%); max-height: min(86vh, 900px);
+  overflow: auto;
+  padding: 32px;
+  background: var(--c-cream); color: var(--c-ink);
+  border-radius: var(--radius);
+}
+.tm-photo img { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; display: block; border-radius: var(--radius-sm); }
+.tm-role {
+  margin: 0 0 6px;
+  font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--c-vermilion-ink);
+}
+.tm-name {
+  font-family: var(--f-display); font-weight: 700;
+  font-size: var(--fs-h3); line-height: 1.1; color: var(--c-bordeaux);
+  margin: 0 0 16px;
+}
+.tm-bio p { font-size: var(--fs-small); line-height: 1.62; margin: 0 0 12px; color: var(--c-ink); }
+.tm-bio p:last-child { margin-bottom: 0; }
+.tm-nav { display: flex; gap: 10px; margin-top: 22px; }
+.tm-nav button {
+  font: inherit; font-size: var(--fs-small); font-weight: 700;
+  padding: 9px 16px; border-radius: 999px; cursor: pointer;
+  border: 1px solid rgba(105, 36, 69, .25);
+  background: transparent; color: var(--c-bordeaux);
+}
+.tm-nav button:hover { background: var(--c-bordeaux); color: var(--c-cream); border-color: transparent; }
+.tm-close {
+  position: absolute; top: 12px; right: 14px;
+  width: 38px; height: 38px; border: 0; border-radius: 50%;
+  background: rgba(105, 36, 69, .1); color: var(--c-bordeaux);
+  font-size: 26px; line-height: 1; cursor: pointer;
+}
+.tm-close:hover { background: var(--c-bordeaux); color: var(--c-cream); }
+@media (max-width: 781px) {
+  .tm { padding: 12px; }
+  .tm-box { grid-template-columns: 1fr; gap: 18px; padding: 22px 18px; max-height: 92vh; }
+  .tm-photo img { aspect-ratio: 4 / 3; }
+}
+/* в редакторе биографии видны как обычный текст */
+.editor-styles-wrapper .teacher-bio { display: block; }
