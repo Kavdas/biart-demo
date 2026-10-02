@@ -2307,7 +2307,7 @@ html :where(.is-position-sticky) {
 <footer class="wp-block-template-part">
 <div class="wp-block-buttons wa-float is-layout-flex wp-block-buttons-is-layout-flex">
 
-<div class="wp-block-button btn-primary"><a class="wp-block-button__link wp-element-button" href="https://wa.me/77007103300?text=Сәлеметсіз%20бе!%20BIART%20сынақ%20сабағына%20жазылғым%20келеді" aria-label="Сынақ сабағы — WhatsApp">Сынақ сабағы</a></div>
+<div class="wp-block-button btn-primary"><a class="wp-block-button__link wp-element-button" href="https://wa.me/77007103300?text=Сәлеметсіз%20бе!%20BIART%20сынақ%20сабағына%20жазылғым%20келеді" aria-label="Сабаққа жазылу — WhatsApp">Сабаққа жазылу</a></div>
 
 </div>
 
@@ -2343,9 +2343,17 @@ html :where(.is-position-sticky) {
   /* тёмный первый экран: шапка прозрачная, пока страница не прокручена */
   if (document.querySelector('.hero-stage')) {
     document.body.classList.add('has-dark-hero');
-    var onScroll = function () { document.body.classList.toggle('is-scrolled', window.scrollY > 24); };
+    var onScroll = function () {
+      document.body.classList.toggle('is-scrolled', window.scrollY > 24);
+      // плавающая кнопка записи появляется, когда первый экран ушёл вверх:
+      // на самом хиро своя кнопка, две сразу не нужны
+      document.body.classList.toggle('is-past-hero', window.scrollY > window.innerHeight * 0.65);
+    };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
+  } else {
+    // на страницах без хиро (оферта, политика, 404) конкурирующей кнопки нет — показываем сразу
+    document.body.classList.add('is-past-hero');
   }
   var header = document.querySelector('.site-header');
   var nav = header && header.querySelector('.nav');

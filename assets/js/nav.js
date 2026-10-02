@@ -4,9 +4,17 @@
   /* тёмный первый экран: шапка прозрачная, пока страница не прокручена */
   if (document.querySelector('.hero-stage')) {
     document.body.classList.add('has-dark-hero');
-    var onScroll = function () { document.body.classList.toggle('is-scrolled', window.scrollY > 24); };
+    var onScroll = function () {
+      document.body.classList.toggle('is-scrolled', window.scrollY > 24);
+      // плавающая кнопка записи появляется, когда первый экран ушёл вверх:
+      // на самом хиро своя кнопка, две сразу не нужны
+      document.body.classList.toggle('is-past-hero', window.scrollY > window.innerHeight * 0.65);
+    };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
+  } else {
+    // на страницах без хиро (оферта, политика, 404) конкурирующей кнопки нет — показываем сразу
+    document.body.classList.add('is-past-hero');
   }
   var header = document.querySelector('.site-header');
   var nav = header && header.querySelector('.nav');
