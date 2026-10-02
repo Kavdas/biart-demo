@@ -1194,7 +1194,7 @@ body.lb-open { overflow: hidden; }
 .editor-styles-wrapper .carousel .m img { height: var(--car-h) !important; width: auto !important; }
 .carousel .m img {
   height: var(--car-h); width: auto; max-width: none;
-  filter: saturate(1.06) contrast(1.03);
+  background: rgba(105, 36, 69, .06);   /* пока кадр грузится */
   border-radius: var(--radius-sm);
   object-fit: cover;
   display: block;

@@ -46,12 +46,21 @@
       else if (sl > w * 1.65) jump(-w);
     };
     track.addEventListener('scroll', loop, { passive: true });
-    // WP ставит картинкам loading="lazy": за правым краем они не загрузились бы никогда — форсируем
-    var imgs = track.querySelectorAll('img');
+    // раньше здесь всем кадрам ставилось loading="eager" — браузер тянул все 39 фото сразу,
+    // и даже хиро догружался секунд за тридцать. Теперь у картинок есть width/height,
+    // ширина ленты считается до загрузки, и ленивые кадры подгружаются по мере прокрутки
     var placed = false;
     var place = function () { if (placed) return; placed = true; jump(realW()); };
-    imgs.forEach(function (i) { i.loading = 'eager'; i.addEventListener('load', function () { if (!placed && track.scrollWidth > track.clientWidth * 2) place(); }); });
-    if (track.scrollWidth > track.clientWidth * 2) place(); else setTimeout(place, 1500);
+    if (track.scrollWidth > track.clientWidth * 2) place();
+    else {
+      var tries = 0;
+      var waitLayout = function () {
+        if (placed) return;
+        if (track.scrollWidth > track.clientWidth * 2 || ++tries > 20) place();
+        else setTimeout(waitLayout, 100);
+      };
+      setTimeout(waitLayout, 50);
+    }
 
     // счётчик и полоса прогресса: с 39 кадрами без них непонятно, где ты и сколько ещё
     var meta = document.createElement('div');
