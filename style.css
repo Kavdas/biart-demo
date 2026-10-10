@@ -3,10 +3,10 @@ Theme Name: BIART
 Theme URI: https://biart.kz
 Author: BIART
 Description: Блочная тема школы креативных индустрий BIART (Астана). Собрана по брендбуку.
-Version: 0.9.4
+Version: 1.0.0
 Requires at least: 6.5
 Tested up to: 7.1
-Requires PHP: 8.1
+Requires PHP: 8.2
 License: GNU General Public License v2 or later
 Text Domain: biart
 */
@@ -1352,6 +1352,7 @@ body.nav-open .wa-float { opacity: 0; visibility: hidden; }
 :root .error-code { font-family: var(--f-display); font-weight: 700; font-size: clamp(120px, 20vw, 220px); line-height: .9; color: var(--c-pink); margin: 0 0 8px; }
 :root .error-page h1 { font-size: var(--fs-h2); margin: 0 0 12px; }
 :root .error-page p { color: var(--c-muted); max-width: 44ch; margin: 0 auto 28px; }
+:root .error-page .error-kk { font-size: var(--fs-small); opacity: .85; margin-top: -14px; }
 .error-page .wp-block-buttons { justify-content: center; }
 
 
